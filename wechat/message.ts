@@ -1,6 +1,8 @@
+import { Message } from 'wechaty';
+
 const msgPools = new Map();
 
-const receiveMsg = async (msg) => {
+export const receiveMsg = async (msg: Message) => {
   // 被@的情况
   if (await msg.mentionSelf()) {
     // 当前会话群聊
@@ -20,11 +22,9 @@ const receiveMsg = async (msg) => {
   }
 };
 
-const sendMsg = async (msg, text, originText) => {
+const sendMsg = async (msg: Message, text: string, originText?: string) => {
   if (originText) {
     text = originText + '\n----------------------------------\n' + text;
   }
   await msg.say(text);
 };
-
-module.exports = { receiveMsg };
