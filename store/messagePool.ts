@@ -27,7 +27,7 @@ export const memoMessage = async (id: string, text: string) => {
     msgList = msgList.slice(2);
   }
   requestPools.set(id, false);
-  if (!resMsg) return;
+  if (!resMsg) return 'openai接口报错🌶';
 
   msgList.push(resMsg);
   msgPools.set(id, msgList);
