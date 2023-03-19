@@ -27,7 +27,11 @@ export const memoMessage = async (id: string, text: string) => {
     msgList = msgList.slice(2);
   }
   requestPools.set(id, false);
-  if (!resMsg) return 'openai接口报错🌶';
+  if (!resMsg) {
+    // 可能移除了两条上下文后还是超出token，继续移除
+    msgList = msgList.slice(2);
+    return 'openai接口报错🌶';
+  }
 
   msgList.push(resMsg);
   msgPools.set(id, msgList);
