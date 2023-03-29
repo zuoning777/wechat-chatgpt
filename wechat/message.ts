@@ -1,5 +1,6 @@
 import { Message } from 'wechaty';
 import { RoomInterface } from 'wechaty/impls';
+import { FileBox } from 'file-box';
 import { memoMessage } from '../store/messagePool';
 
 export const receiveMsg = async (msg: Message) => {
@@ -12,28 +13,39 @@ export const receiveMsg = async (msg: Message) => {
     const roomId = `room-${room.id}`;
 
     const talker = msg.talker();
-    const resText = await memoMessage(roomId, text);
-    if (resText) {
-      sendMsg(msg, resText, `@${talker.name()}：${text}`);
-    }
+    const res = await memoMessage(roomId, text);
+
+    sendMsg(msg, res, `@${talker.name()}：${text}`);
   } else if (!msg.room()) {
     // 私聊的情况
     const text = msg.text();
     if (!text) return;
 
     const talker = msg.talker();
+    if (talker.name() === '微信团队') {
+      return;
+    }
     const talkerId = `talker-${talker.id}`;
 
-    const resText = await memoMessage(talkerId, text);
-    if (resText) {
-      sendMsg(msg, resText);
-    }
+    const res = await memoMessage(talkerId, text);
+    sendMsg(msg, res);
   }
 };
 
-const sendMsg = async (msg: Message, text: string, originText?: string) => {
-  if (originText) {
-    text = originText + '\n----------------------------------\n' + text;
+const sendMsg = async (
+  msg: Message,
+  payload: { text?: string; url?: string },
+  originText?: string
+) => {
+  let { text, url } = payload;
+  if (text) {
+    if (originText) {
+      text = originText + '\n----------------------------------\n' + text;
+    }
+    await msg.say(text);
+  } else if (url) {
+    // 文心一言的图片没有后缀，需要拼接.png后缀识别为图片
+    const fileBox = FileBox.fromUrl(`${url}.png`);
+    await msg.say(fileBox);
   }
-  await msg.say(text);
 };

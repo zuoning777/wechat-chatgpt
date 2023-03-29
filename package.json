@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "dev": "OPENAI_API_KEY=xxxxx ts-node index.ts",
+    "dev": "WENXIN_TOKEN=xxx OPENAI_API_KEY=xxx ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
